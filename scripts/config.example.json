@@ -2,7 +2,7 @@
   "_说明": "把这份文件复制一份改名叫 config.json，再把下面几个占位符换成你自己的凭证。config.json 不要分享给别人、不要传到公开仓库。",
 
   "mineru_token": "在这里粘贴你自己的 MinerU token（一串很长的 JWT，形如 eyJ...）",
-  "_mineru_token_获取方式": "去 https://mineru.net 注册账号，登录后在个人中心/API管理里申请 API token（免费账号每天有一定页数额度）",
+  "_mineru_token_获取方式": "去 https://mineru.net 注册账号，登录后打开 https://mineru.net/apiManage/token 申请 API token（免费账号每天有一定页数额度）",
 
   "minimax_api_key": "在这里粘贴你自己的 MiniMax API key（sk-cp- 开头）",
   "minimax_base_url": "https://api.minimaxi.com/v1",

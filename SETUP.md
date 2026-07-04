@@ -33,8 +33,8 @@ python -c "import requests, PIL, fitz; print('依赖OK')"
 这个 skill 依赖两个外部服务，都需要用户自己注册账号申请凭证——**不要帮用户填入任何凭证，也不要使用这份包里可能出现的任何示例值**，这些必须是用户自己的账号：
 
 1. **MinerU**（负责试卷版面解析、OCR、插图裁剪）
-   - 去 https://mineru.net 注册账号
-   - 登录后在个人中心/API管理页面申请一个 API token（一串很长的 JWT 字符串，形如 `eyJ...`）
+   - 去 https://mineru.net 注册账号（已注册可直接登录）
+   - 打开 **https://mineru.net/apiManage/token** ——登录后会跳到 token 管理页面，点"创建 token"或类似按钮拿一个（一串很长的 JWT 字符串，形如 `eyJ...`）
    - 免费账号每天有一定的解析页数额度
 
 2. **MiniMax**（负责视觉核对和 LaTeX 转换，用的是 `MiniMax-M3` 模型）
