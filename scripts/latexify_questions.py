@@ -107,11 +107,21 @@ def fix_and_validate(data):
     return problems
 
 
+def load_config():
+    cfg_path = SCRIPT_DIR / "config.json"
+    if not cfg_path.exists():
+        sys.exit(
+            f"未找到 {cfg_path}——先执行 `cp scripts/config.example.json scripts/config.json`，"
+            "并填入你自己的 MiniMax API key（申请步骤见 SETUP.md）。"
+        )
+    return json.loads(cfg_path.read_text(encoding="utf-8"))
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit("用法: python latexify_questions.py <questions.json路径>")
     json_path = Path(sys.argv[1])
-    cfg = json.loads((SCRIPT_DIR / "config.json").read_text(encoding="utf-8"))
+    cfg = load_config()
     api_key = cfg["minimax_api_key"]
 
     data = json.loads(json_path.read_text(encoding="utf-8"))

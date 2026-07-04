@@ -8,6 +8,7 @@
 """
 import base64
 import json
+import mimetypes
 import sys
 from pathlib import Path
 
@@ -19,12 +20,19 @@ MODEL = "MiniMax-M3"
 
 
 def load_config():
-    return json.loads((SCRIPT_DIR / "config.json").read_text(encoding="utf-8"))
+    cfg_path = SCRIPT_DIR / "config.json"
+    if not cfg_path.exists():
+        sys.exit(
+            f"未找到 {cfg_path}——先执行 `cp scripts/config.example.json scripts/config.json`，"
+            "并填入你自己的 MiniMax API key（申请步骤见 SETUP.md）。"
+        )
+    return json.loads(cfg_path.read_text(encoding="utf-8"))
 
 
 def ask(image_path, prompt, api_key):
     with open(image_path, "rb") as f:
         b64 = base64.b64encode(f.read()).decode()
+    mime = mimetypes.guess_type(str(image_path))[0] or "image/jpeg"
     body = {
         "model": MODEL,
         "messages": [
@@ -32,7 +40,7 @@ def ask(image_path, prompt, api_key):
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}},
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
                 ],
             }
         ],
