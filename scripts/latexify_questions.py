@@ -5,7 +5,14 @@
 
 用法:
     python latexify_questions.py <questions.json路径>
+    python latexify_questions.py <questions.json路径> --validate-only
+
+如果第3步整理 questions.json 时已经自己手写好 LaTeX（对着原图看数学符号有把握，
+不需要假手 M3），加 --validate-only 跳过 API 调用，只做换行伪影修复和 $ 配对校验——
+不需要 config.json/API key，也不用等一次网络请求。只有对符号没把握、想让 M3 帮忙
+转换时，才不加这个参数走完整流程。
 """
+import argparse
 import copy
 import json
 import re
@@ -118,38 +125,47 @@ def load_config():
 
 
 def main():
-    if len(sys.argv) < 2:
-        sys.exit("用法: python latexify_questions.py <questions.json路径>")
-    json_path = Path(sys.argv[1])
-    cfg = load_config()
-    api_key = cfg["minimax_api_key"]
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("json_path", help="questions.json 路径")
+    ap.add_argument(
+        "--validate-only", action="store_true",
+        help="跳过 M3 转换，只做换行伪影修复 + $ 配对校验（适用于已经手写好 LaTeX 的情况，不需要 API key）",
+    )
+    args = ap.parse_args()
 
+    json_path = Path(args.json_path)
     data = json.loads(json_path.read_text(encoding="utf-8"))
     questions = data["questions"]
 
-    # 按 8 题一批送给 M3，避免单次输出过长
-    fields = ("stem", "options", "answer")
-    for start in range(0, len(questions), 8):
-        batch = questions[start:start + 8]
-        slim = []
-        for q in batch:
-            item = {"id": q["id"], "stem": q["stem"]}
-            if q.get("options"):
-                item["options"] = q["options"]
-            if q.get("answer"):
-                item["answer"] = q["answer"]
-            slim.append(item)
-        payload = json.dumps(slim, ensure_ascii=False, indent=1)
-        print(f"  转换第 {batch[0]['id']}-{batch[-1]['id']} 题 ...")
-        converted = call_m3(payload, api_key)
-        if len(converted) != len(batch):
-            raise RuntimeError(f"返回题数不符: {len(converted)} != {len(batch)}")
-        for q, c in zip(batch, converted):
-            if q["id"] != c.get("id"):
-                raise RuntimeError(f"题号错位: {q['id']} != {c.get('id')}")
-            for f in fields:
-                if f in c and c[f]:
-                    q[f] = c[f]
+    if not args.validate_only:
+        cfg = load_config()
+        api_key = cfg["minimax_api_key"]
+
+        # 按 8 题一批送给 M3，避免单次输出过长
+        fields = ("stem", "options", "answer")
+        for start in range(0, len(questions), 8):
+            batch = questions[start:start + 8]
+            slim = []
+            for q in batch:
+                item = {"id": q["id"], "stem": q["stem"]}
+                if q.get("options"):
+                    item["options"] = q["options"]
+                if q.get("answer"):
+                    item["answer"] = q["answer"]
+                slim.append(item)
+            payload = json.dumps(slim, ensure_ascii=False, indent=1)
+            print(f"  转换第 {batch[0]['id']}-{batch[-1]['id']} 题 ...")
+            converted = call_m3(payload, api_key)
+            if len(converted) != len(batch):
+                raise RuntimeError(f"返回题数不符: {len(converted)} != {len(batch)}")
+            for q, c in zip(batch, converted):
+                if q["id"] != c.get("id"):
+                    raise RuntimeError(f"题号错位: {q['id']} != {c.get('id')}")
+                for f in fields:
+                    if f in c and c[f]:
+                        q[f] = c[f]
+    else:
+        print("  --validate-only：跳过 M3 转换，只做换行伪影修复和 $ 配对校验。")
 
     problems = fix_and_validate(data)
 
