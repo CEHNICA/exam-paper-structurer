@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# 真实凭证 — 千万别传上去，这是用户私人的
+scripts/config.json
+scripts/config.local.json
+scripts/*.json
+!scripts/config.example.json
+
+# 跑出来的中间产物
+mineru_output/
+structured/
+*.bak
+*.bak.*
+
+# 临时调试
+tmp/
+test_output/
