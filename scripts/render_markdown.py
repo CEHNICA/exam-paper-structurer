@@ -35,8 +35,8 @@ def render(data):
         lines.append("")
 
         if q.get("options"):
-            opt_line = "　".join(f"{k}. {v}" for k, v in q["options"].items())
-            lines.append(opt_line)
+            opt_lines = "  \n".join(f"{k}. {v}" for k, v in q["options"].items())
+            lines.append(opt_lines)
             lines.append("")
 
         images = q.get("images") or ([q["image"]] if q.get("image") else [])
