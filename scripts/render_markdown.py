@@ -35,8 +35,10 @@ def render(data):
         lines.append("")
 
         if q.get("options"):
-            opt_lines = "  \n".join(f"{k}. {v}" for k, v in q["options"].items())
-            lines.append(opt_lines)
+            # 每个选项独立一段，前后留空行，选项字母与内容之间多一个全角空格做左右留白
+            for k, v in q["options"].items():
+                lines.append("")
+                lines.append(f"{k}.　{v}")
             lines.append("")
 
         images = q.get("images") or ([q["image"]] if q.get("image") else [])
