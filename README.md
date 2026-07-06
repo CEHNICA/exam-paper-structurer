@@ -43,7 +43,7 @@ questions.json + questions.md —— 图文并茂、可直接用的题库
 }
 ```
 
-`render_markdown.py` 把它渲染成带图、选项分行显示的 `questions.md`，直接拿去做题库、喂给 Anki，或者当复盘材料。完整字段说明见 [`references/questions_schema.md`](./references/questions_schema.md)。
+`render_markdown.py` 把它渲染成带图的 `questions.md`，每个选项独占一段（前后空行做上下留白，选项字母与内容之间用全角空格 `　` 做左右留白），直接拿去做题库、喂给 Anki，或者当复盘材料。完整字段说明见 [`references/questions_schema.md`](./references/questions_schema.md)。
 
 ## 只做这一件事，划清边界
 
